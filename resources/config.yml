@@ -1,0 +1,16 @@
+---
+#  / _\ __ _| |_   _ ___
+#  \ \ / _` | | | | / __|
+#  _\ \ (_| | | |_| \__ \
+#  \__/\__,_|_|\__,_|___/
+# Max amount of warns before punishment
+max-warns: 3
+# Enabled punishment : - Ban
+#                      - IPBan
+#                      - MegaBan (IPBan and Ban in one)
+#                      - Command
+punishment: Command
+#Enabled after you use Command in the line above
+punishment-command:
+  - "warn %PLAYER%"
+...
