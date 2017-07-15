@@ -85,4 +85,14 @@ class Main extends PluginBase implements Listener{
       $this->HackDetected($player, "Flying");
     }
   }
+
+  public function onDamage(EntityDamageEvent $event) {
+    if($event instanceof EntityDamageByEntityEvent){
+      if($event->getDamager() instanceof Player && $event->getEntity() instanceof Player) {
+        if($event->getDamager()->distance($event->getEntity()) > 4){
+          $this->HackDetected($event->getDamager(), "Reach");
+        }
+      }
+    }
+  }
 }
