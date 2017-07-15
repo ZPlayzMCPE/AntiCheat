@@ -26,8 +26,7 @@ class Main extends PluginBase implements Listener{
   public function ScanMessage($message, $player){
     $pos    = strpos(strtoupper($message), "%PLAYER%");
     $newmsg = $message;
-    if ($pos !== false)
-    {
+    if ($pos !== false){
       $newmsg = substr_replace($message, $player, $pos, 8);
     }
     return $newmsg;
@@ -69,6 +68,7 @@ class Main extends PluginBase implements Listener{
       $this->getServer()->getIPBans()->addBan($player->getAddress(), "You are banned for " . $reason, null, $sender);
       $sender->getServer()->getNameBans()->addBan($player->getName(), $message, null, $sender);
       // todo ClientBan
+
     }elseif ($this->getConfig()->get("punishment") === "Command"){
       foreach($this->getConfig()->get("punishment-command") as $command){
         $send = $this->ScanMessage($command, $player);
@@ -82,7 +82,7 @@ class Main extends PluginBase implements Listener{
     $player = $event->getPlayer();
     $packet = $event->getPacket();
     if((($packet->flags >> 9) & 0x01 === 1) or (($packet->flags >> 7) & 0x01 === 1) or (($packet->flags >> 6) & 0x01 === 1)){
-      $this->HackDetected($player, "Flying")
+      $this->HackDetected($player, "Flying");
     }
   }
 }
