@@ -2,3 +2,11 @@ name: Salus
 main: Salus\Driesboy\Main
 version: 1.0
 api: [3.0.0-ALPHA5]
+permissions:
+    salus:
+        description: "Allows to use all salus features."
+        default: false
+        children:
+            salus.legitop:
+              description: "A permission."
+              default: false
