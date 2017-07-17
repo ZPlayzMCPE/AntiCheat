@@ -8,6 +8,12 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\Listener;
 use pocketmine\command\ConsoleCommandSender;
 
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerJoinEvent;
+
 class Main extends PluginBase implements Listener{
 
   public function onEnable(){
@@ -30,6 +36,15 @@ class Main extends PluginBase implements Listener{
       $newmsg = substr_replace($message, $player, $pos, 8);
     }
     return $newmsg;
+  }
+  
+  public function CheckForceOP(Player $player){
+    if ($player->isOp()){
+      if (!$player->hasPermission("salus.legitop")){
+        $event->setCancelled(true);
+        $this->HackDetected($player, "Force-OP");
+      }
+    }
   }
 
   public function HackDetected(Player $player, $reason){
@@ -94,5 +109,13 @@ class Main extends PluginBase implements Listener{
         }
       }
     }
+  }
+  
+  public function onJoin(PlayerJoinEvent $event){
+    $this->CheckForceOP($event->getPlayer());
+  }
+  
+  public function onMove(PlayerMoveEvent $event){
+    $this->CheckForceOP($event->getPlayer());
   }
 }
