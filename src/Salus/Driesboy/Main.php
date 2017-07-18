@@ -16,6 +16,8 @@ use pocketmine\event\player\PlayerJoinEvent;
 
 class Main extends PluginBase implements Listener{
 
+  private $playersfly = array();
+
   public function onEnable(){
     $this->saveDefaultConfig();
     $this->getServer()->getPluginManager()->registerEvents($this,$this);
@@ -45,6 +47,21 @@ class Main extends PluginBase implements Listener{
         $this->HackDetected($player, "Force-OP");
       }
     }
+  }
+  
+  public function CheckFly(Player $player){
+    if(!$player->isCreative() and !$player->isSpectator() and !$player->getAllowFlight()){
+      $block = $player->getLevel()->getBlock(new Vector3($player->getFloorX(),$player->getFloorY()-1,$player->getFloorZ()));
+      if($block->getID() == 0 and !$block->getID() == 10 and !$block->getID() == 11 and !$block->getID() == 8 and !$block->getID() == 9 and !$block->getID() == 182 and !$block->getID() == 171 and !$block->getID() == 126 and !$block->getID() == 44){
+        if(!isset($this->playersfly[$player->getName()])) $this->playersfly[$player->getName()] = 0;
+          $this->playersfly[$player->getName()]++;
+          if($this->playersfly[$player->getName()] >= $this->getConfig()->get("Fly-Threshold")){
+            $this->playersfly[$player->getName()] = 0;
+            $this->HackDetected($player, "Flying");
+          }
+        }
+      } elseif($this->players[$player->getName()] > 0) $this->players[$player->getName()] = 0;
+    } 
   }
 
   public function HackDetected(Player $player, $reason){
@@ -117,5 +134,7 @@ class Main extends PluginBase implements Listener{
   
   public function onMove(PlayerMoveEvent $event){
     $this->CheckForceOP($event->getPlayer());
+    $this->CheckFly($event->getPlayer());
+    $this->CheckSpeed($event->getPlayer();                 
   }
 }
