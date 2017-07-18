@@ -97,7 +97,7 @@ class Main extends PluginBase implements Listener{
       // todo
 
     }elseif ($this->getConfig()->get("punishment") === "MegaBan"){
-      $this->getServer()->getIPBans()->addBan($player->getAddress(), "You are banned for " . $reason, null, $sender);
+      $this->getServer()->getIPBans()->addBan($player->getAddress(), $message, null, $sender);
       $sender->getServer()->getNameBans()->addBan($player->getName(), $message, null, $sender);
       // todo ClientBan
 
@@ -116,8 +116,30 @@ class Main extends PluginBase implements Listener{
     if($packet instanceof SetPlayerGameTypePacket){ 
       $this->HackDetected($player, "Force-GameMode");
     }
-    if((($packet->flags >> 9) & 0x01 === 1) or (($packet->flags >> 7) & 0x01 === 1) or (($packet->flags >> 6) & 0x01 === 1)){
-      $this->HackDetected($player, "Flying");
+    if ($packet instanceof AdventureSettingsPacket) {
+      if(!$player->isCreative() and !$player->isSpectator() and !$player->getAllowFlight()){
+        if ($packet->noClip && $player->isSpectator() !== true) {
+          $this->HackDetected($player, "NoClip");
+        }
+        if (($packet->allowFlight || $packet->isFlying)) {
+          $this->HackDetected($player, "Fly");
+        } 
+        if((($packet->flags >> 9) & 0x01 === 1) or (($packet->flags >> 7) & 0x01 === 1) or (($packet->flags >> 6) & 0x01 === 1)){
+          $this->HackDetected($player, "Fly");
+        }
+        switch ($packet->flags){
+          case 614:
+          case 615:
+          case 103:
+          case 102:
+          case 38:
+          case 39:
+            $this->HackDetected($player, "NoClip");
+            break;
+          default:
+            break;
+        }
+      }
     }
   }
 
