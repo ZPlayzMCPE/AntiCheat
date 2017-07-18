@@ -7,6 +7,7 @@ An AntiCheat for big servers
 - [x] Fly detection
 - [x] Reach detection
 - [x] Force-OP detection
+- [x] Force-GameMode detection
 - [ ] Fast Eat
 
 ## Punishments   

@@ -13,4 +13,6 @@ punishment: Command
 #Enabled after you use Command in the line above
 punishment-command:
   - "warn %PLAYER%"
+#Thresholt before hack will be detected NEVER SET LOWER THAN 90
+Fly-Threshold: 90
 ...

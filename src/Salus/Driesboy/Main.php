@@ -113,6 +113,9 @@ class Main extends PluginBase implements Listener{
   public function onRecieve(DataPacketReceiveEvent $event) {
     $player = $event->getPlayer();
     $packet = $event->getPacket();
+    if($packet instanceof SetPlayerGameTypePacket){ 
+      $this->HackDetected($player, "Force-GameMode");
+    }
     if((($packet->flags >> 9) & 0x01 === 1) or (($packet->flags >> 7) & 0x01 === 1) or (($packet->flags >> 6) & 0x01 === 1)){
       $this->HackDetected($player, "Flying");
     }
