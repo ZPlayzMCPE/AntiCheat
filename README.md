@@ -8,6 +8,7 @@ An AntiCheat for big servers
 - [x] Reach detection
 - [x] Force-OP detection
 - [x] Force-GameMode detection
+- [x] NoClip detection
 - [ ] Fast Eat
 
 ## Punishments   
