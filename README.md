@@ -15,5 +15,5 @@ An AntiCheat for big servers
 ## Punishments   
 - [x] Ban
 - [x] IPBan
-- [ ] ClientBan (IPBan and Ban in one)
-- [x] MegaBan  
+- [ ] ClientBan
+- [x] MegaBan  (All in one ban)
