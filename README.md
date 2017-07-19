@@ -9,6 +9,7 @@ An AntiCheat for big servers
 - [x] Force-OP detection
 - [x] Force-GameMode detection
 - [x] NoClip detection
+- [x] UpdateAttributesPacket detection
 - [ ] Fast Eat
 
 ## Punishments   
