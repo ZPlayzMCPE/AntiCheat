@@ -1,4 +1,4 @@
-# Salus [![Poggit-CI](https://poggit.pmmp.io/ci.shield/Driesboy/AntiCheat)](https://poggit.pmmp.io/ci/Driesboy/AntiCheat)
+# Salus [![Poggit-CI](https://poggit.pmmp.io/ci.shield/Driesboy/AntiCheat/~)](https://poggit.pmmp.io/ci/Driesboy/AntiCheat/~)
 
 An AntiCheat for big servers
 
