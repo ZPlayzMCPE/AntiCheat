@@ -8,6 +8,7 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\command\ConsoleCommandSender;
+use pocketmine\math\Vector3;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -23,8 +24,12 @@ class Main extends PluginBase implements Listener{
   private $playersfly = array();
 
   public function onEnable(){
-    $this->saveDefaultConfig();
     $this->getServer()->getPluginManager()->registerEvents($this,$this);
+    if(!(file_exists($this->getDataFolder()))) {
+      @mkdir($this->getDataFolder());
+      chdir($this->getDataFolder());
+      @mkdir("Players/", 0777, true);
+    }
     $this->saveResource("config.yml");
     $this->getLogger()->info("§3Salus has been enabled!");
     @mkdir($this->getDataFolder() . "players");
