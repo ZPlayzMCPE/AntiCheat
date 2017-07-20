@@ -1,7 +1,7 @@
 name: Salus
 main: Salus\Driesboy\Main
 version: 1.0
-api: [3.0.0-ALPHA5]
+api: [3.0.0-ALPHA5,3.0.0-ALPHA6]
 permissions:
     salus:
         description: "Allows to use all salus features."

@@ -41,7 +41,7 @@ class Main extends PluginBase implements Listener{
 
   // API
   public function ScanMessage($message, $player){
-    $pos    = strpos(strtoupper($message), "%PLAYER%");
+    $pos = strpos(strtoupper($message), "%PLAYER%");
     $newmsg = $message;
     if ($pos !== false){
       $newmsg = substr_replace($message, $player, $pos, 8);
@@ -52,7 +52,6 @@ class Main extends PluginBase implements Listener{
   public function CheckForceOP(Player $player){
     if ($player->isOp()){
       if (!$player->hasPermission("salus.legitop")){
-       
         $this->HackDetected($player, "Force-OP");
       }
     }
@@ -115,7 +114,7 @@ class Main extends PluginBase implements Listener{
     }elseif ($this->getConfig()->get("punishment") === "Command"){
       foreach($this->getConfig()->get("punishment-command") as $command){
         $send = $this->ScanMessage($command, $player);
-        $this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), $send);
+        $this->getServer()->dispatchCommand(new ConsoleCommandSender(), $send);
       }
     }
   }
@@ -160,7 +159,7 @@ class Main extends PluginBase implements Listener{
   public function onDamage(EntityDamageEvent $event) {
     if($event instanceof EntityDamageByEntityEvent){
       if($event->getDamager() instanceof Player && $event->getEntity() instanceof Player) {
-        if($event->getDamager()->distance($event->getEntity()) > 4){
+        if($event->getDamager()->distance($event->getEntity()) > 6){
           $this->HackDetected($event->getDamager(), "Reach");
         }
       }
@@ -169,6 +168,7 @@ class Main extends PluginBase implements Listener{
   
   public function onJoin(PlayerJoinEvent $event){
     $this->CheckForceOP($event->getPlayer());
+    $this->playersfly[$event->getPlayer()->getName()] = 0;
   }
   
   public function onMove(PlayerMoveEvent $event){
