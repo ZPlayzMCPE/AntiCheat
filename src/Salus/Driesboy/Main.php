@@ -47,7 +47,7 @@ class Main extends PluginBase implements Listener{
   public function CheckForceOP(Player $player){
     if ($player->isOp()){
       if (!$player->hasPermission("salus.legitop")){
-        $event->setCancelled(true);
+       
         $this->HackDetected($player, "Force-OP");
       }
     }
@@ -63,8 +63,8 @@ class Main extends PluginBase implements Listener{
             $this->playersfly[$player->getName()] = 0;
             $this->HackDetected($player, "Flying");
           }
-      }elseif($this->players[$player->getName()] > 0) { 
-        $this->players[$player->getName()] = 0;
+      }elseif($this->playersfly[$player->getName()] > 0) { 
+        $this->playersfly[$player->getName()] = 0;
       }
     } 
   }
@@ -167,7 +167,6 @@ class Main extends PluginBase implements Listener{
   
   public function onMove(PlayerMoveEvent $event){
     $this->CheckForceOP($event->getPlayer());
-    $this->CheckFly($event->getPlayer());
-    $this->CheckSpeed($event->getPlayer());                 
+    $this->CheckFly($event->getPlayer());                 
   }
 }
