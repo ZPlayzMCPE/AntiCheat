@@ -6,6 +6,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\Listener;
+use pocketmine\Player;
 use pocketmine\command\ConsoleCommandSender;
 
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -13,6 +14,9 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+
+use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
+use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 
 class Main extends PluginBase implements Listener{
 
@@ -59,7 +63,6 @@ class Main extends PluginBase implements Listener{
             $this->playersfly[$player->getName()] = 0;
             $this->HackDetected($player, "Flying");
           }
-        }
       }elseif($this->players[$player->getName()] > 0) { 
         $this->players[$player->getName()] = 0;
       }
@@ -165,6 +168,6 @@ class Main extends PluginBase implements Listener{
   public function onMove(PlayerMoveEvent $event){
     $this->CheckForceOP($event->getPlayer());
     $this->CheckFly($event->getPlayer());
-    $this->CheckSpeed($event->getPlayer();                 
+    $this->CheckSpeed($event->getPlayer());                 
   }
 }
