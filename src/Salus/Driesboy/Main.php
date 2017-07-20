@@ -60,10 +60,12 @@ class Main extends PluginBase implements Listener{
             $this->HackDetected($player, "Flying");
           }
         }
-      } elseif($this->players[$player->getName()] > 0) $this->players[$player->getName()] = 0;
+      }elseif($this->players[$player->getName()] > 0) { 
+        this->players[$player->getName()] = 0;
+      }
     } 
   }
-
+  
   public function HackDetected(Player $player, $reason){
     $player_name = $player->getName();
     $file = file_get_contents($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
