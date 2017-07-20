@@ -61,7 +61,7 @@ class Main extends PluginBase implements Listener{
           }
         }
       }elseif($this->players[$player->getName()] > 0) { 
-        this->players[$player->getName()] = 0;
+        $this->players[$player->getName()] = 0;
       }
     } 
   }
