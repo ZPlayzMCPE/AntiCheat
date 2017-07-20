@@ -87,6 +87,7 @@ class Main extends PluginBase implements Listener{
   }
 
   public function CheckMax(Player $player, $reason, $sender){
+    $file = file_get_contents($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
     if($file >= $this->getConfig()->get("max-warns")) {
       $this->Ban($player, TF::RED . "You are banned for using" . $reason . "hacks by " . $sender);
     }else{
