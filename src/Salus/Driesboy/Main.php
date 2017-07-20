@@ -76,11 +76,11 @@ class Main extends PluginBase implements Listener{
   
   public function HackDetected(Player $player, $reason){
     $player_name = $player->getName();
-    $file = file_get_contents($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
     if(!(file_exists($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt"))) {
       touch($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
       file_put_contents($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt", "1");
     }else{
+      $file = file_get_contents($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
       file_put_contents($this->getDataFolder() . "players/" . strtolower($player_name) . ".txt", $file + 1);
     }
     $this->CheckMax($player ,$reason, "AntiCheat");
