@@ -33,6 +33,7 @@ class Main extends PluginBase implements Listener{
     $this->saveResource("config.yml");
     $this->getLogger()->info("§3Salus has been enabled!");
     @mkdir($this->getDataFolder() . "players");
+    $this->getServer()->getScheduler()->scheduleRepeatingTask(new CheckTask($this), 20);
   }
 
   public function onDisable(){
@@ -65,7 +66,7 @@ class Main extends PluginBase implements Listener{
           $this->playersfly[$player->getName()]++;
           if($this->playersfly[$player->getName()] >= $this->getConfig()->get("Fly-Threshold")){
             $this->playersfly[$player->getName()] = 0;
-            $this->HackDetected($player, "Flying");
+            $this->HackDetected($player, "Fly");
           }
       }elseif($this->playersfly[$player->getName()] > 0) { 
         $this->playersfly[$player->getName()] = 0;
@@ -118,7 +119,30 @@ class Main extends PluginBase implements Listener{
       }
     }
   }
-
+  
+  public function ResetPoints(Player $player){
+    $this->movePlayers[$player->getName()]["distance"] = (float) 0;
+    $this->point[$player->getName()]["distance"] = (float) 0;
+    $this->movePlayers[$player->getName()]["fly"] = (float) 0;
+    $this->point[$player->getName()]["fly"] = (float) 0;
+    $this->playersfly[$player->getName()] = 0; // todo implement this in points
+  }
+  
+  public function CheckTask($event){
+    $player = $event->getPlayer();
+    $oldPos = $event->getFrom();
+	$newPos = $event->getTo();
+    if(!$player->isCreative() and !$player->isSpectator() and !$player->isOp() and !$player->getAllowFlight()){
+      $FlyMove = (float) round($newPos->getY() - $oldPos->getY(),3);
+      $DistanceMove = (float) round(sqrt(($newPos->getX() - $oldPos->getX()) ** 2 + ($newPos->getZ() - $oldPos->getZ()) ** 2),2);
+      if($FlyMove === (float) -0.002 or $FlyMove === (float) -0.003){
+        $this->movePlayers[$player->getName()]["distance"] += 3;
+      }
+      $this->movePlayers[$player->getName()]["fly"] += $FlyMove;
+      $this->movePlayers[$player->getName()]["distance"] += $DistanceMove;
+    }
+  }
+  
   // Events
   public function onRecieve(DataPacketReceiveEvent $event) {
     $player = $event->getPlayer();
@@ -165,12 +189,14 @@ class Main extends PluginBase implements Listener{
   }
   
   public function onJoin(PlayerJoinEvent $event){
-    $this->CheckForceOP($event->getPlayer());
-    $this->playersfly[$event->getPlayer()->getName()] = 0;
+    $player = $event->getPlayer();
+    $this->ResetPoints($player)
+    $this->CheckForceOP($player);
   }
   
   public function onMove(PlayerMoveEvent $event){
     $this->CheckForceOP($event->getPlayer());
-    $this->CheckFly($event->getPlayer());                 
+    $this->CheckFly($event->getPlayer());
+    $this->CheckTask($event);                 
   }
 }
