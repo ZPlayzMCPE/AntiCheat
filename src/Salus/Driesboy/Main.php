@@ -155,13 +155,11 @@ class Main extends PluginBase implements Listener{
       }
     }
   }
-
-  public function onDamage(EntityDamageEvent $event) {
-    if($event instanceof EntityDamageByEntityEvent){
-      if($event->getDamager() instanceof Player && $event->getEntity() instanceof Player) {
-        if($event->getDamager()->distance($event->getEntity()) > 6){
-          $this->HackDetected($event->getDamager(), "Reach");
-        }
+  
+  public function onDamage(EntityDamageEvent $event){
+    if($event instanceof EntityDamageByEntityEvent and $event->getEntity() instanceof Player and $event->getDamager() instanceof Player and $event->getCause() === EntityDamageEvent::CAUSE_ENTITY_ATTACK){
+      if(round($event->getEntity()->distanceSquared($event->getDamager())) >= 12){
+        $this->HackDetected($event->getDamager(), "Reach");
       }
     }
   }
