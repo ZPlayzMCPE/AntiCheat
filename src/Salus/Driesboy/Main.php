@@ -125,7 +125,7 @@ class Main extends PluginBase implements Listener{
     $this->point[$player->getName()]["distance"] = (float) 0;
     $this->movePlayers[$player->getName()]["fly"] = (float) 0;
     $this->point[$player->getName()]["fly"] = (float) 0;
-    $this->playersfly[$player->getName()] = 0; // todo implement this in points
+    $this->playersfly[$player->getName()] = 0;
   }
   
   public function CheckTask($event){
@@ -190,7 +190,7 @@ class Main extends PluginBase implements Listener{
   
   public function onJoin(PlayerJoinEvent $event){
     $player = $event->getPlayer();
-    $this->ResetPoints($player)
+    $this->ResetPoints($player);
     $this->CheckForceOP($player);
   }
   
