@@ -22,6 +22,8 @@ use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 class Main extends PluginBase implements Listener{
 
   private $playersfly = array();
+  public $movePlayers = [];
+  public $point = [];
 
   public function onEnable(){
     $this->getServer()->getPluginManager()->registerEvents($this,$this);
