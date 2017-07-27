@@ -1,4 +1,5 @@
-# Salus [![Poggit-CI](https://poggit.pmmp.io/ci.shield/Driesboy/AntiCheat/~)](https://poggit.pmmp.io/ci/Driesboy/AntiCheat/~)
+# Salus for PocketMine (pmmp) 3.0.0-ALPHA5
+[![Poggit-CI](https://poggit.pmmp.io/ci.shield/Driesboy/AntiCheat/~)](https://poggit.pmmp.io/ci/Driesboy/AntiCheat/~)
 
 An AntiCheat for big servers
 
@@ -11,7 +12,8 @@ An AntiCheat for big servers
 - [x] Force-GameMode detection
 - [x] NoClip detection
 - [x] UpdateAttributesPacket detection
-- [ ] Fast Eat
+- [ ] Fast Eat detection
+- [x] Speed detection
 
 ## Punishments   
 - [x] Ban
