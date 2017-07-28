@@ -43,7 +43,7 @@ class Main extends PluginBase implements Listener {
       if($this->getConfig()->get("detect-Speed") === true){
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new SpeedTask($this), 20);
       }
-      if($this->getConfig()->get("config-version") !== "1.1"){
+      if($this->getConfig()->get("config-version") !== 1.1){
         $this->getServer()->getLogger()->error(TF::RED . "[Salus] > Your Config is out of date!");
         $this->getServer()->shutdown();
       }
