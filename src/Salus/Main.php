@@ -40,9 +40,6 @@ class Main extends PluginBase implements Listener {
       $this->saveResource("config.yml");
       $this->getLogger()->info("§3Salus has been enabled!");
       @mkdir($this->getDataFolder() . "players");
-      if($this->getConfig()->get("detect-Speed") === true){
-        $this->getServer()->getScheduler()->scheduleRepeatingTask(new SpeedTask($this), 20);
-      }
       if($this->getConfig()->get("config-version") !== 1.1){
         $this->getServer()->getLogger()->error(TF::RED . "[Salus] > Your Config is out of date!");
         $this->getServer()->shutdown();
@@ -135,7 +132,6 @@ class Main extends PluginBase implements Listener {
   */
 
   public function reset(Player $player){
-    $this->point[$player->getName()]["speed"] = (float) 0;
     $this->point[$player->getName()]["fly"] = (float) 0;
     $this->point[$player->getName()]["reach"] = (float) 0;
     $this->point[$player->getName()]["noclip"] = (float) 0;
@@ -198,7 +194,7 @@ class Main extends PluginBase implements Listener {
             $this->HackDetected($event->getDamager(), "Reach Hacks", "Salus", "1");
           }
         }else{
-          $this->point[$player->getName()]["reach"] = (float) 0;
+          $this->point[$event->getDamager()]["reach"] = (float) 0;
         }
       }
     }
@@ -306,7 +302,7 @@ class Main extends PluginBase implements Listener {
         and !in_array(Block::SNOW                , $this->surroundings )){
 
           $this->point[$player->getName()]["noclip"] += (float) 1;
-          if((float) $this->point[$player->getName()]["noclip"] > (float) 3){
+          if((float) $this->point[$player->getName()]["noclip"] > (float) 10){
             $event->setCancelled();
             $this->HackDetected($player, "No-Clip Hacks", "Salus", "1");
           }
