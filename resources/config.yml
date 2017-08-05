@@ -21,6 +21,9 @@ punishment: Command
 punishment-command:
   - "nban %PLAYER% 1week You are banned for hacking by Salus"
 
+warn-command:
+  - "kick %PLAYER% You are warned for %REASON% by %SENDER%"
+
 ##############################################################################################################
 # _   _           _       _        ___  _   _        _ _           _            ______          _        _   #
 #| | | |         | |     | |      / _ \| | | |      (_) |         | |           | ___ \        | |      | |  #
@@ -88,7 +91,7 @@ detect-ForceOP: true
 #                            |_|    #
 #####################################
 #BETA!!!
-detect-NoClip: false
+detect-NoClip: true
 
 #DO NOT CHANGE THIS
-config-version: 1.1
+config-version: 1.2

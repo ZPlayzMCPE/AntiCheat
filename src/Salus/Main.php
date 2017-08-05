@@ -12,13 +12,19 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\command\ConsoleCommandSender;
+use pocketmine\command\CommandSender;
+use pocketmine\command\Command;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\item\Item;
+use pocketmine\Server;
 use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\math\Vector3;
 use pocketmine\block\Block;
-use Salus\SpeedTask;
+
+use Salus\Commands\ReportCommand;
+use Salus\Commands\VanishCommand;
+use Salus\Commands\WarnCommand;
 
 class Main extends PluginBase implements Listener {
 
@@ -26,25 +32,38 @@ class Main extends PluginBase implements Listener {
   public $point = array();
   /** @var array */
   public $surroundings = array();
-  /** @var array */
-  public $fly = array();
+
+  private static $ins;
 
   public function onEnable() {
     if (!$this->isSpoon()) {
       $this->getServer()->getPluginManager()->registerEvents($this, $this);
+
       if(!(file_exists($this->getDataFolder()))) {
         @mkdir($this->getDataFolder());
         chdir($this->getDataFolder());
         @mkdir("players/", 0777, true);
       }
       $this->saveResource("config.yml");
-      $this->getLogger()->info("§3Salus has been enabled!");
       @mkdir($this->getDataFolder() . "players");
-      if($this->getConfig()->get("config-version") !== 1.1){
+
+      self::$ins = $this;
+
+      Server::getInstance()->getCommandMap()->register("report", new ReportCommand());
+      Server::getInstance()->getCommandMap()->register("vanish", new VanishCommand());
+      Server::getInstance()->getCommandMap()->register("warn", new WarnCommand());
+
+      if($this->getConfig()->get("config-version") !== 1.2){
         $this->getServer()->getLogger()->error(TF::RED . "[Salus] > Your Config is out of date!");
         $this->getServer()->shutdown();
+      }else{
+        $this->getLogger()->info("§3Salus has been enabled!");
       }
     }
+  }
+
+  public static function getInstance(){
+    return self::$ins;
   }
 
   public function isSpoon(){
@@ -77,6 +96,11 @@ class Main extends PluginBase implements Listener {
     unset($this->point[$event->getPlayer()->getName()]);
   }
 
+  /**
+  * @param PlayerMoveEvent $event
+  * @priority HIGHEST
+  * @ignoreCancelled true
+  */
   public function onPlayerMove(PlayerMoveEvent $event){
     $this->checkForceOP($event);
     $this->checkNoClip($event);
@@ -137,15 +161,6 @@ class Main extends PluginBase implements Listener {
     $this->point[$player->getName()]["noclip"] = (float) 0;
   }
 
-  public function ScanMessage($message, $player){
-    $pos = strpos(strtoupper($message), "%PLAYER%");
-    $newmsg = $message;
-    if ($pos !== false){
-      $newmsg = substr_replace($message, $player, $pos, 8);
-    }
-    return $newmsg;
-  }
-
   public function GetSurroundingBlocks(Player $player){
     $level = $player->getLevel();
 
@@ -188,13 +203,13 @@ class Main extends PluginBase implements Listener {
     if($this->getConfig()->get("detect-Reach") === true){
       if($event instanceof EntityDamageByEntityEvent and $event->getEntity() instanceof Player and $event->getDamager() instanceof Player and $event->getCause() === EntityDamageEvent::CAUSE_ENTITY_ATTACK){
         if(round($event->getEntity()->distanceSquared($event->getDamager())) >= 12){
-          $this->point[$event->getDamager()]["reach"] += (float) 1;
+          $this->point[$event->getDamager()->getName()]["reach"] += (float) 1;
           $event->setCancelled();
-          if((float) $this->point[$event->getDamager()]["reach"] > (float) 3){
+          if((float) $this->point[$event->getDamager()->getName()]["reach"] > (float) 3){
             $this->HackDetected($event->getDamager(), "Reach Hacks", "Salus", "1");
           }
         }else{
-          $this->point[$event->getDamager()]["reach"] = (float) 0;
+          $this->point[$event->getDamager()->getName()]["reach"] = (float) 0;
         }
       }
     }
@@ -205,7 +220,6 @@ class Main extends PluginBase implements Listener {
     if($this->getConfig()->get("detect-ForceOP") === true){
       if ($player->isOp()){
         if (!$player->hasPermission("salus.legitop")){
-          $event->setCancelled();
           $this->HackDetected($player, "Force-OP Hacks", "Salus", "3");
         }
       }
@@ -219,12 +233,11 @@ class Main extends PluginBase implements Listener {
     if($this->getConfig()->get("detect-Fly") === true){
       if(!$player->isCreative() and !$player->isSpectator() and !$player->getAllowFlight()){
         if ($oldPos->getY() <= $newPos->getY()){
-          if($player->GetInAirTicks() > 20){
+          if($player->GetInAirTicks() > 40){
             $maxY = $player->getLevel()->getHighestBlockAt(floor($newPos->getX()), floor($newPos->getZ()));
             if($newPos->getY() - 2 > $maxY){
               $this->point[$player->getName()]["fly"] += (float) 1;
               if((float) $this->point[$player->getName()]["fly"] > (float) 3){
-                $event->setCancelled();
                 $this->HackDetected($player, "Fly Hacks", "Salus", "1");
               }
             }
@@ -242,75 +255,75 @@ class Main extends PluginBase implements Listener {
       $level = $player->getLevel();
       $pos = new Vector3($player->getX(), $player->getY(), $player->getZ());
       $BlockID = $level->getBlock($pos)->getId();
+      if(!$player->isSpectator()){
+        if (
+          //BUILDING MATERIAL
+          $BlockID == 1
+          or $BlockID == 2
+          or $BlockID == 3
+          or $BlockID == 4
+          or $BlockID == 5
+          or $BlockID == 7
+          or $BlockID == 17
+          or $BlockID == 18
+          or $BlockID == 20
+          or $BlockID == 43
+          or $BlockID == 45
+          or $BlockID == 47
+          or $BlockID == 48
+          or $BlockID == 49
+          or $BlockID == 79
+          or $BlockID == 80
+          or $BlockID == 87
+          or $BlockID == 89
+          or $BlockID == 97
+          or $BlockID == 98
+          or $BlockID == 110
+          or $BlockID == 112
+          or $BlockID == 121
+          or $BlockID == 155
+          or $BlockID == 157
+          or $BlockID == 159
+          or $BlockID == 161
+          or $BlockID == 162
+          or $BlockID == 170
+          or $BlockID == 172
+          or $BlockID == 174
+          or $BlockID == 243
+          //ORES TODO
+          or $BlockID == 14
+          or $BlockID == 15
+          or $BlockID == 16
+          or $BlockID == 21
+          or $BlockID == 56
+          or $BlockID == 73
+          or $BlockID == 129
+        ){
+          if(    !in_array(Block::SLAB                , $this->surroundings )
+          and !in_array(Block::WOOD_STAIRS         , $this->surroundings )
+          and !in_array(Block::COBBLE_STAIRS       , $this->surroundings )
+          and !in_array(Block::BRICK_STAIRS        , $this->surroundings )
+          and !in_array(Block::STONE_BRICK_STAIRS  , $this->surroundings )
+          and !in_array(Block::NETHER_BRICKS_STAIRS, $this->surroundings )
+          and !in_array(Block::SPRUCE_WOOD_STAIRS  , $this->surroundings )
+          and !in_array(Block::BIRCH_WOODEN_STAIRS , $this->surroundings )
+          and !in_array(Block::JUNGLE_WOOD_STAIRS  , $this->surroundings )
+          and !in_array(Block::QUARTZ_STAIRS       , $this->surroundings )
+          and !in_array(Block::WOOD_SLAB           , $this->surroundings )
+          and !in_array(Block::ACACIA_WOOD_STAIRS  , $this->surroundings )
+          and !in_array(Block::DARK_OAK_WOOD_STAIRS, $this->surroundings )
+          and !in_array(Block::SNOW                , $this->surroundings )){
 
-      if (
-        //BUILDING MATERIAL
-        $BlockID == 1
-        or $BlockID == 2
-        or $BlockID == 3
-        or $BlockID == 4
-        or $BlockID == 5
-        or $BlockID == 7
-        or $BlockID == 17
-        or $BlockID == 18
-        or $BlockID == 20
-        or $BlockID == 43
-        or $BlockID == 45
-        or $BlockID == 47
-        or $BlockID == 48
-        or $BlockID == 49
-        or $BlockID == 79
-        or $BlockID == 80
-        or $BlockID == 87
-        or $BlockID == 89
-        or $BlockID == 97
-        or $BlockID == 98
-        or $BlockID == 110
-        or $BlockID == 112
-        or $BlockID == 121
-        or $BlockID == 155
-        or $BlockID == 157
-        or $BlockID == 159
-        or $BlockID == 161
-        or $BlockID == 162
-        or $BlockID == 170
-        or $BlockID == 172
-        or $BlockID == 174
-        or $BlockID == 243
-        //ORES TODO
-        or $BlockID == 14
-        or $BlockID == 15
-        or $BlockID == 16
-        or $BlockID == 21
-        or $BlockID == 56
-        or $BlockID == 73
-        or $BlockID == 129
-      ){
-        if(    !in_array(Block::SLAB                , $this->surroundings )
-        and !in_array(Block::WOOD_STAIRS         , $this->surroundings )
-        and !in_array(Block::COBBLE_STAIRS       , $this->surroundings )
-        and !in_array(Block::BRICK_STAIRS        , $this->surroundings )
-        and !in_array(Block::STONE_BRICK_STAIRS  , $this->surroundings )
-        and !in_array(Block::NETHER_BRICKS_STAIRS, $this->surroundings )
-        and !in_array(Block::SPRUCE_WOOD_STAIRS  , $this->surroundings )
-        and !in_array(Block::BIRCH_WOODEN_STAIRS , $this->surroundings )
-        and !in_array(Block::JUNGLE_WOOD_STAIRS  , $this->surroundings )
-        and !in_array(Block::QUARTZ_STAIRS       , $this->surroundings )
-        and !in_array(Block::WOOD_SLAB           , $this->surroundings )
-        and !in_array(Block::ACACIA_WOOD_STAIRS  , $this->surroundings )
-        and !in_array(Block::DARK_OAK_WOOD_STAIRS, $this->surroundings )
-        and !in_array(Block::SNOW                , $this->surroundings )){
-
-          $this->point[$player->getName()]["noclip"] += (float) 1;
-          if((float) $this->point[$player->getName()]["noclip"] > (float) 10){
-            $event->setCancelled();
-            $this->HackDetected($player, "No-Clip Hacks", "Salus", "1");
+            $this->point[$player->getName()]["noclip"] += (float) 1;
+            if((float) $this->point[$player->getName()]["noclip"] > (float) 10){
+              $this->HackDetected($player, "No-Clip Hacks", "Salus", "1");
+            }
+          }else{
+            $this->point[$player->getName()]["noclip"] = (float) 0;
           }
         }else{
           $this->point[$player->getName()]["noclip"] = (float) 0;
         }
-      }else{
-        $this->point[$player->getName()]["noclip"] = (float) 0;
       }
     }
   }
@@ -338,14 +351,29 @@ class Main extends PluginBase implements Listener {
   public function CheckMax(Player $player, $reason, $sender){
     $file = file_get_contents($this->getDataFolder() . "players/" . strtolower($player->getName()) . ".txt");
     if($file >= $this->getConfig()->get("max-warns")) {
-      $this->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender, $sender);
+      $this->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender, $sender, $reason);
     }else{
-      $player->kick(TF::YELLOW . "You are warned for " . $reason . " by " . $sender);
-      return true;
+      foreach($this->getConfig()->get("warn-command") as $command){
+        $this->getServer()->dispatchCommand(new ConsoleCommandSender, str_replace(array(
+          "%PLAYER%",
+          "%X%",
+          "%Y%",
+          "%Z%",
+          "%SENDER%",
+          "%REASON%"
+        ), array(
+          $player->getName(),
+          $player->getX(),
+          $player->getY(),
+          $player->getZ(),
+          $sender,
+          $reason
+        ), $command));
+      }
     }
   }
 
-  public function Ban(Player $player, $message, $sender){
+  public function Ban(Player $player, $message, $sender, $reason){
     $message = $this->getConfig()->get("punishment");
     if ($this->getConfig()->get("punishment") === "Ban"){
       $this->getServer()->getNameBans()->addBan($player->getName(), $message, null, $sender);
@@ -359,8 +387,21 @@ class Main extends PluginBase implements Listener {
       // todo ClientBan
     }elseif ($this->getConfig()->get("punishment") === "Command"){
       foreach($this->getConfig()->get("punishment-command") as $command){
-        $send = $this->ScanMessage($command, $player->getName());
-        $this->getServer()->dispatchCommand(new ConsoleCommandSender(), $send);
+        $this->getServer()->dispatchCommand(new ConsoleCommandSender, str_replace(array(
+          "%PLAYER%",
+          "%X%",
+          "%Y%",
+          "%Z%",
+          "%SENDER%",
+          "%REASON%"
+        ), array(
+          $player->getName(),
+          $player->getX(),
+          $player->getY(),
+          $player->getZ(),
+          $sender,
+          $reason
+        ), $command));
       }
     }
   }

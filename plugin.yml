@@ -5,6 +5,16 @@ api: [3.0.0-ALPHA5]
 author: Driesboy
 description: AntiCheat for MCPE
 api: [3.0.0-ALPHA7]
+commands:
+  report:
+    description: report a player for breaking the rules
+    permission: salus.report
+  vanish:
+    description: spectating command for moderators
+    permission: salus.vanish
+  warn:
+    description: warn a player for breaking the rules
+    permission: salus.warn
 permissions:
   salus:
     description: "Allows to use all salus features."
@@ -13,3 +23,12 @@ permissions:
       salus.legitop:
         description: "A permission."
         default: false
+      salus.report:
+        description: "A permission."
+        default: true
+      salus.vanish:
+        description: "A permission."
+        default: op
+      salus.warn:
+        description: "A permission."
+        default: op
