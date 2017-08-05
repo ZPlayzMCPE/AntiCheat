@@ -3,6 +3,8 @@
 
 An AntiCheat for big servers
 
+## Latest release: https://poggit.pmmp.io/p/Salus-AntiCheat/1.2
+
 # Features:
 
 ## Detections
