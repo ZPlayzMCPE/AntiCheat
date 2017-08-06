@@ -17,13 +17,13 @@ class WarnCommand extends Command{
   public function execute(CommandSender $sender, string $label, array $args):bool{
     $main = Main::getInstance();
     if(!(isset($args[0]) and isset($args[1]))) {
-      $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /warn <player> <reason> <points>");
+      $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /warn <player> <points> <reason>");
       return true;
     }else{
-      if($args[2] === null) {
+      if($args[1] === null) {
         $points = "1";
       }else{
-        $points = $args[2];
+        $points = $args[1];
       }
       $player = $main->getServer()->getPlayer($args[0]);
       if($player === null) {
@@ -31,6 +31,7 @@ class WarnCommand extends Command{
         return true;
       }else{
         unset($args[0]);
+        unset($args[1]);
         $reason = implode(" ", $args);
         $main->HackDetected($player, $reason, $sender, $points);
         $sender->sendMessage(TF::RED . "Player " . $player . " has been warned for". $reason .".");
