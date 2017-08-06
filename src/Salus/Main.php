@@ -299,7 +299,8 @@ class Main extends PluginBase implements Listener {
           or $BlockID == 73
           or $BlockID == 129
         ){
-          if(    !in_array(Block::SLAB                , $this->surroundings )
+          if(    !in_array(Block::WOODEN_SLAB      , $this->surroundings )
+          and !in_array(Block::STONE_SLAB          , $this->surroundings )
           and !in_array(Block::WOOD_STAIRS         , $this->surroundings )
           and !in_array(Block::COBBLE_STAIRS       , $this->surroundings )
           and !in_array(Block::BRICK_STAIRS        , $this->surroundings )
