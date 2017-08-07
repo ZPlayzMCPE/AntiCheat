@@ -232,21 +232,18 @@ class Main extends PluginBase implements Listener {
     $newPos = $event->getTo();
     if($this->getConfig()->get("detect-Fly") === true){
       if(!$player->isCreative() and !$player->isSpectator() and !$player->getAllowFlight()){
-        if( !in_array(Block::FENCE               , $this->surroundings )
-        and !in_array(Block::FENCE_GATE          , $this->surroundings )){
-          if ($oldPos->getY() <= $newPos->getY()){
-            if($player->GetInAirTicks() > 40){
-              $maxY = $player->getLevel()->getHighestBlockAt(floor($newPos->getX()), floor($newPos->getZ()));
-              if($newPos->getY() - 2 > $maxY){
-                $this->point[$player->getName()]["fly"] += (float) 1;
-                if((float) $this->point[$player->getName()]["fly"] > (float) 3){
-                  $this->HackDetected($player, "Fly Hacks", "Salus", "1");
-                }
+        if ($oldPos->getY() <= $newPos->getY()){
+          if($player->GetInAirTicks() > 40){
+            $maxY = $player->getLevel()->getHighestBlockAt(floor($newPos->getX()), floor($newPos->getZ()));
+            if($newPos->getY() - 2 > $maxY){
+              $this->point[$player->getName()]["fly"] += (float) 1;
+              if((float) $this->point[$player->getName()]["fly"] > (float) 5){
+                $this->HackDetected($player, "Fly Hacks", "Salus", "1");
               }
             }
-          }else{
-            $this->point[$player->getName()]["fly"] = (float) 0;
           }
+        }else{
+          $this->point[$player->getName()]["fly"] = (float) 0;
         }
       }
     }
