@@ -19,39 +19,49 @@ class VanishCommand extends Command{
   }
 
   public function execute(CommandSender $sender, string $label, array $args){
-    $main = Main::getInstance();
-    if(!(isset($args[0]))) {
-      $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /vanish on, /vanish off, /vanish tp <player>");
-      return true;
-    }else{
-      switch(strtolower($args[0])){
-        case "on":
-        $sender->setGamemode("3");
-        $this->spectator[] = $sender->getName();
-        break;
+    if($sender->hasPermission("salus.vanish")){
+      $main = Main::getInstance();
+      if(!(isset($args[0]))) {
+        $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /vanish on, /vanish off, /vanish tp <player>");
+        return true;
+      }else{
+        switch(strtolower($args[0])){
+          case "on":
+            if (!in_array($sender->getName(), $this->spectator)){
+              $sender->setGamemode("3");
+              $this->spectator[] = $sender->getName();
+            }else{
+              $sender->sendMessage(TF::RED . "You are already vanished");
+            }
+          break;
 
-        case "tp":
-        if (in_array($sender->getName(), $this->spectator)){
-          $player = $main->getServer()->getPlayer($args[1]);
-          if($player === null) {
-            $sender->sendMessage(TF::RED . "Player " . $player->getName() . " could not be found.");
-            return true;
+          case "tp":
+          if (in_array($sender->getName(), $this->spectator)){
+            $player = $main->getServer()->getPlayer($args[1]);
+            if($player === null) {
+              $sender->sendMessage(TF::RED . "Player " . $player->getName() . " could not be found.");
+              return true;
+            }else{
+              $main->getServer()->dispatchCommand(new ConsoleCommandSender(),"tp " . $sender->getName() . " " . $player->getName());
+            }
           }else{
-            $main->getServer()->dispatchCommand(new ConsoleCommandSender(),"tp " . $sender->getName() . " " . $player->getName());
+            $sender->sendMessage(TF::RED . "You are not vanished");
           }
-        }else{
-          $sender->sendMessage(TF::RED . "You are not vanished");
-        }
-        break;
+          break;
 
-        case "off":
-        if (in_array($sender->getName(), $this->spectator)){
-          unset($this->spectator[array_search($sender->getName(), $this->spectator)]);
-          $sender->teleport($main->getServer()->getDefaultLevel()->getSafeSpawn());
-          $sender->setGamemode($main->getServer()->getDefaultGamemode());
+          case "off":
+          if (in_array($sender->getName(), $this->spectator)){
+            unset($this->spectator[array_search($sender->getName(), $this->spectator)]);
+            $sender->teleport($main->getServer()->getDefaultLevel()->getSafeSpawn());
+            $sender->setGamemode($main->getServer()->getDefaultGamemode());
+          }else{
+            $sender->sendMessage(TF::RED . "You are not vanished");
+          }
+          break;
         }
-        break;
       }
+    }else{
+      $sender->sendMessage("§l§o§3G§bC§r§7: §cYou don't have permission to use that command!");
     }
   }
 }

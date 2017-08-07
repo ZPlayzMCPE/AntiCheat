@@ -15,26 +15,24 @@ class WarnCommand extends Command{
   }
 
   public function execute(CommandSender $sender, string $label, array $args):bool{
-    $main = Main::getInstance();
-    if(!(isset($args[0]) and isset($args[1]))) {
-      $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /warn <player> <points> <reason>");
-      return true;
-    }else{
-      if($args[1] === null) {
-        $points = "1";
-      }else{
-        $points = $args[1];
-      }
-      $player = $main->getServer()->getPlayer($args[0]);
-      if($player === null) {
-        $sender->sendMessage(TF::RED . "Player " . $player . " could not be found.");
+    if($sender->hasPermission("salus.warn")){
+      $main = Main::getInstance();
+      if(!(isset($args[0]) and isset($args[1]) and isset($args[2]))) {
+        $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /warn <player> <points> <reason>");
         return true;
       }else{
-        unset($args[0]);
-        unset($args[1]);
-        $reason = implode(" ", $args);
-        $main->HackDetected($player, $reason, $sender, $points);
-        $sender->sendMessage(TF::RED . "Player " . $player . " has been warned for". $reason .".");
+        $points = $args[1];
+        $player = $main->getServer()->getPlayer($args[0]);
+        if($player === null) {
+          $sender->sendMessage(TF::RED . "Player " . $player . " could not be found.");
+          return true;
+        }else{
+          unset($args[0]);
+          unset($args[1]);
+          $reason = implode(" ", $args);
+          $main->HackDetected($player, $reason, $sender, $points);
+          $sender->sendMessage(TF::RED . "Player " . $player . " has been warned for". $reason .".");
+        }
       }
     }
   }
