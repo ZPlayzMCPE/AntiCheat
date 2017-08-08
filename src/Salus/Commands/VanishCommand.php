@@ -8,6 +8,8 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat as TF;
+use pocketmine\network\mcpe\protocol\ContainerSetContentPacket;
+use pocketmine\network\mcpe\protocol\types\ContainerIds;
 
 class VanishCommand extends Command{
 
@@ -27,36 +29,44 @@ class VanishCommand extends Command{
       }else{
         switch(strtolower($args[0])){
           case "on":
-            if (!in_array($sender->getName(), $this->spectator)){
-              $sender->setGamemode("3");
-              $this->spectator[] = $sender->getName();
+            if ($sender->getLevel()->getName() === $main->getServer()->getDefaultLevel()->getName()){
+              if (!in_array($sender->getName(), $this->spectator)){
+                $sender->setGamemode("3");
+                $this->spectator[] = $sender->getName();
+              }else{
+                $sender->sendMessage(TF::RED . "You are already vanished");
+              }
             }else{
-              $sender->sendMessage(TF::RED . "You are already vanished");
+              $sender->sendMessage(TF::RED . "You are not in the lobby");
             }
           break;
 
           case "tp":
-          if (in_array($sender->getName(), $this->spectator)){
-            $player = $main->getServer()->getPlayer($args[1]);
-            if($player === null) {
-              $sender->sendMessage(TF::RED . "Player " . $player->getName() . " could not be found.");
-              return true;
+            if (in_array($sender->getName(), $this->spectator)){
+              $player = $main->getServer()->getPlayer($args[1]);
+              if($player === null) {
+                $sender->sendMessage(TF::RED . "Player " . $player->getName() . " could not be found.");
+                return true;
+              }else{
+                $main->getServer()->dispatchCommand(new ConsoleCommandSender(),"tp " . $sender->getName() . " " . $player->getName());
+              }
             }else{
-              $main->getServer()->dispatchCommand(new ConsoleCommandSender(),"tp " . $sender->getName() . " " . $player->getName());
+              $sender->sendMessage(TF::RED . "You are not vanished");
             }
-          }else{
-            $sender->sendMessage(TF::RED . "You are not vanished");
-          }
           break;
 
           case "off":
-          if (in_array($sender->getName(), $this->spectator)){
-            unset($this->spectator[array_search($sender->getName(), $this->spectator)]);
-            $sender->teleport($main->getServer()->getDefaultLevel()->getSafeSpawn());
-            $sender->setGamemode($main->getServer()->getDefaultGamemode());
-          }else{
-            $sender->sendMessage(TF::RED . "You are not vanished");
-          }
+            if (in_array($sender->getName(), $this->spectator)){
+              unset($this->spectator[array_search($sender->getName(), $this->spectator)]);
+              $sender->teleport($main->getServer()->getDefaultLevel()->getSafeSpawn());
+              $sender->setGamemode("1");
+              $pk = new ContainerSetContentPacket();
+              $pk->windowid = ContainerIds::CREATIVE;
+              $pk->targetEid = $sender->getId();
+              $sender->dataPacket($pk);
+            }else{
+              $sender->sendMessage(TF::RED . "You are not vanished");
+            }
           break;
         }
       }

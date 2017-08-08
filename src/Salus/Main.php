@@ -25,6 +25,7 @@ use pocketmine\block\Block;
 use Salus\Commands\ReportCommand;
 use Salus\Commands\VanishCommand;
 use Salus\Commands\WarnCommand;
+use Salus\Tasks\KickTask;
 
 class Main extends PluginBase implements Listener {
 
