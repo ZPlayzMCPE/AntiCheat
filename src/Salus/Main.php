@@ -360,23 +360,7 @@ class Main extends PluginBase implements Listener {
     if($file >= $this->getConfig()->get("max-warns")) {
       $this->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender, $sender, $reason);
     }else{
-      foreach($this->getConfig()->get("warn-command") as $command){
-        $this->getServer()->dispatchCommand(new ConsoleCommandSender, str_replace(array(
-          "%PLAYER%",
-          "%X%",
-          "%Y%",
-          "%Z%",
-          "%SENDER%",
-          "%REASON%"
-        ), array(
-          $player->getName(),
-          $player->getX(),
-          $player->getY(),
-          $player->getZ(),
-          $sender,
-          $reason
-        ), $command));
-      }
+      $player->transfer("gamecraftpe.tk", "19132");
     }
   }
 
