@@ -33,6 +33,12 @@ class Main extends PluginBase implements Listener {
   /** @var array */
   public $surroundings = array();
 
+  private $webEndings = array(".net",".com",".co",".org",".info",".tk",".ml",".ga",".au",".uk",".me",".sa");
+
+  private $players = [];
+
+  private $warnings = [];
+
   private static $ins;
 
   public function onEnable() {
@@ -115,6 +121,65 @@ class Main extends PluginBase implements Listener {
 
   public function onDamage(EntityDamageEvent $event){
     $this->checkReach($event);
+  }
+
+  public function onChat(PlayerChatEvent $event){
+    $this->perWorldChat($event);
+    $this->AntiSpam($event);
+    $this->NoAds($event);
+  }
+
+  public function perWorldChat($event) {
+    if ($this->getConfig()->get("perWorldChat") === true){
+  		$player = $event->getPlayer();
+  		$recipients = $event->getRecipients();
+  		foreach($recipients as $key => $recipient){
+  			if($recipient instanceof Player){
+  				if($recipient->getLevel() != $player->getLevel()){
+  					unset($recipients[$key]);
+  				}
+  			}
+  		}
+  		$event->setRecipients($recipients);
+  	}
+  }
+
+  public function AntiSpam($event){
+    if ($this->getConfig()->get("AntiSpam") === true){
+  		if(isset($this->players[spl_object_hash($event->getPlayer())]) and (time() - $this->players[spl_object_hash($event->getPlayer())] <= intval($this->getConfig()->get("time")))){
+  			if(!isset($this->warnings[spl_object_hash($event->getPlayer())])){
+  				$this->warnings[spl_object_hash($event->getPlayer())] = 0;
+  			}
+  			++$this->warnings[spl_object_hash($event->getPlayer())];
+  			$event->getPlayer()->sendMessage(str_replace("%warns%", $this->warnings[spl_object_hash($event->getPlayer())], $this->getConfig()->getAll(){"warning_message"}));
+  			$event->setCancelled();
+  			if($this->warnings[spl_object_hash($event->getPlayer())] >= intval($this->getConfig()->get("max_warnings"))){
+  				$event->getPlayer()->kick(str_replace("%player%", $event->getPlayer()->getName(), $this->getConfig()->get("kick_reason")));
+  				unset($this->warnings[spl_object_hash($event->getPlayer())]);
+  				$event->setCancelled();
+  			}
+  		}else{
+  			$this->players[spl_object_hash($event->getPlayer())] = time();
+  		}
+    }
+  }
+
+  public function NoAds($event){
+    if ($this->getConfig()->get("NoAds") === true){
+      $parts = explode('.', $event->getMessage());
+  		if(count($parts) >= 2){
+  			if (preg_match('/[0-9]+/', $parts[1])){
+  				$event->setCancelled(true);
+  				$event->getPlayer()->kick("§cAdvertising");
+  			}
+  		}
+  		foreach ($this->webEndings as $url) {
+  			if (strpos($message, $url) !== FALSE){
+  				$event->setCancelled(true);
+  				$event->getPlayer()->kick("§cAdvertising");
+  			}
+  		}
+    }
   }
 
   public function onRecieve(DataPacketReceiveEvent $event) {
