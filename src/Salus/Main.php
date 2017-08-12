@@ -49,9 +49,15 @@ class Main extends PluginBase implements Listener {
 
       self::$ins = $this;
 
-      Server::getInstance()->getCommandMap()->register("report", new ReportCommand());
-      Server::getInstance()->getCommandMap()->register("vanish", new VanishCommand());
-      Server::getInstance()->getCommandMap()->register("warn", new WarnCommand());
+      if ($this->getConfig()->get("ReportCommand") === true){
+        Server::getInstance()->getCommandMap()->register("report", new ReportCommand());
+      }
+      if ($this->getConfig()->get("VanishCommand") === true){
+        Server::getInstance()->getCommandMap()->register("vanish", new VanishCommand());
+      }
+      if ($this->getConfig()->get("WarnCommand") === true){
+        Server::getInstance()->getCommandMap()->register("warn", new WarnCommand());
+      }
 
       if($this->getConfig()->get("config-version") !== 1.2){
         $this->getServer()->getLogger()->error(TF::RED . "[Salus] > Your Config is out of date!");

@@ -14,28 +14,41 @@ class WarnCommand extends Command{
     parent::__construct("warn", "warn a player for breaking the rules");
   }
 
-  public function execute(CommandSender $sender, string $label, array $args):bool{
-    $main = Main::getInstance();
-    if(!(isset($args[0]) and isset($args[1]))) {
-      $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /warn <player> <points> <reason>");
-      return true;
-    }else{
-      if($args[1] === null) {
-        $points = "1";
-      }else{
-        $points = $args[1];
-      }
-      $player = $main->getServer()->getPlayer($args[0]);
-      if($player === null) {
-        $sender->sendMessage(TF::RED . "Player " . $player . " could not be found.");
+  public function execute(CommandSender $sender, string $label, array $args){
+    if($sender->hasPermission("salus.warn")){
+      $main = Main::getInstance();
+      if(!(isset($args[0]) and isset($args[1]) and isset($args[2]))) {
+        $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /warn <player> <points> <reason>");
         return true;
       }else{
-        unset($args[0]);
-        unset($args[1]);
-        $reason = implode(" ", $args);
-        $main->HackDetected($player, $reason, $sender, $points);
-        $sender->sendMessage(TF::RED . "Player " . $player . " has been warned for". $reason .".");
+        $points = $args[1];
+        $player = $main->getServer()->getPlayer($args[0]);
+        if($player === null) {
+          $sender->sendMessage(TF::RED . "Player " . $player . " could not be found.");
+          return true;
+        }else{
+          unset($args[0]);
+          unset($args[1]);
+          $reason = implode(" ", $args);
+          $player_name = $player->getName();
+          if(!(file_exists($main->getDataFolder() . "players/" . strtolower($player_name) . ".txt"))) {
+            touch($main->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
+            file_put_contents($main->getDataFolder() . "players/" . strtolower($player_name) . ".txt", $points);
+          }else{
+            $file = file_get_contents($main->getDataFolder() . "players/" . strtolower($player_name) . ".txt");
+            file_put_contents($main->getDataFolder() . "players/" . strtolower($player_name) . ".txt", $file + $points);
+          }
+          $file = file_get_contents($main->getDataFolder() . "players/" . strtolower($player->getName()) . ".txt");
+          if($file >= $main->getConfig()->get("max-warns")) {
+            $main->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender->getName(), $sender->getName(), $reason);
+          }else{
+            $player->kick("You are warned for " . $reason . " by " . $sender->getName());
+          }
+          $sender->sendMessage(TF::RED . "" . $player->getName() . " has been warned for ". $reason .".");
+        }
       }
+    }else{
+      $sender->sendMessage("§cYou don't have permission to use that command!");
     }
   }
 }
