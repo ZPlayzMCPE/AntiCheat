@@ -9,6 +9,7 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\command\ConsoleCommandSender;
@@ -65,7 +66,7 @@ class Main extends PluginBase implements Listener {
         Server::getInstance()->getCommandMap()->register("warn", new WarnCommand());
       }
 
-      if($this->getConfig()->get("config-version") !== 1.2){
+      if($this->getConfig()->get("config-version") !== 1.4){
         $this->getServer()->getLogger()->error(TF::RED . "[Salus] > Your Config is out of date!");
         $this->getServer()->shutdown();
       }else{
@@ -165,6 +166,7 @@ class Main extends PluginBase implements Listener {
   }
 
   public function NoAds($event){
+    $message = $event->getMessage();
     if ($this->getConfig()->get("NoAds") === true){
       $parts = explode('.', $event->getMessage());
   		if(count($parts) >= 2){
