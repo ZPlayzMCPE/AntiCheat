@@ -19,7 +19,7 @@ punishment: Command
 
 #Enabled after you use Command in the line above
 punishment-command:
-  - "nban %PLAYER% 1week You are banned for %REASON% by %SENDER%""
+  - "nban %PLAYER% 1week You are banned for %REASON% by %SENDER%"
 
 warn-command:
   - "kick %PLAYER% You are warned for %REASON% by %SENDER%"
@@ -38,6 +38,30 @@ ReportCommand: true
 VanishCommand: true
 
 WarnCommand: true
+
+###########################################################
+#  ____ _           _   _____             _             _ #
+#/  __ \ |         | | /  __ \           | |           | |#
+#| /  \/ |__   __ _| |_| /  \/ ___  _ __ | |_ _ __ ___ | |#
+#| |   | '_ \ / _` | __| |    / _ \| '_ \| __| '__/ _ \| |#
+#| \__/\ | | | (_| | |_| \__/\ (_) | | | | |_| | | (_) | |#
+# \____/_| |_|\__,_|\__|\____/\___/|_| |_|\__|_|  \___/|_|#
+###########################################################
+perWorldChat: true
+
+AntiSpam: true
+
+#time in seconds a player has to wait to send a message again
+time: 1
+#max warnings a player will receive until they receive a kick
+max_warnings: 2
+#warn player each time they spam
+warning_message: "§ePlease stop chatting too quick! You may be kicked for spamming! §cWarnings:§6 %warns%"
+#message that will be sent if player is spamming
+#%player% = players name
+kick_reason: "§aYou have been kicked for spamming"
+
+NoAds: true
 
 ##############################################################################################################
 # _   _           _       _        ___  _   _        _ _           _            ______          _        _   #
@@ -109,4 +133,4 @@ detect-ForceOP: true
 detect-NoClip: true
 
 #DO NOT CHANGE THIS
-config-version: 1.3
+config-version: 1.4

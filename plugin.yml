@@ -1,6 +1,6 @@
 name: AntiCheat
 main: Salus\Main
-version: 1.3
+version: 1.4
 api: [3.0.0-ALPHA5]
 author: Driesboy
 description: AntiCheat for MCPE

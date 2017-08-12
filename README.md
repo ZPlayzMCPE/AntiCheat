@@ -16,6 +16,7 @@ An AntiCheat for big servers
 - [x] UpdateAttributesPacket detection
 - [ ] Fast Eat detection
 - [ ] Speed detection
+- [x] ChatControl
 
 ## Punishments   
 - [x] Ban
