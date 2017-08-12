@@ -22,3 +22,8 @@ An AntiCheat for big servers
 - [x] IPBan
 - [ ] ClientBan
 - [x] MegaBan  (All in one ban)
+
+## Commands   
+- [x] Warn
+- [x] Vanish
+- [x] Report

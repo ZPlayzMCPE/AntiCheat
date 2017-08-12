@@ -45,7 +45,7 @@ class VanishCommand extends Command{
             if (in_array($sender->getName(), $this->spectator)){
               $player = $main->getServer()->getPlayer($args[1]);
               if($player === null) {
-                $sender->sendMessage(TF::RED . "Player " . $player->getName() . " could not be found.");
+                $sender->sendMessage(TF::RED . "" . $player->getName() . " could not be found.");
                 return true;
               }else{
                 $main->getServer()->dispatchCommand(new ConsoleCommandSender(),"tp " . $sender->getName() . " " . $player->getName());

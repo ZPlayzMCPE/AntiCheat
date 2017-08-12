@@ -44,7 +44,7 @@ class WarnCommand extends Command{
           }else{
             $player->kick("You are warned for " . $reason . " by " . $sender->getName());
           }
-          $sender->sendMessage(TF::RED . "Player " . $player->getName() . " has been warned for ". $reason .".");
+          $sender->sendMessage(TF::RED . "" . $player->getName() . " has been warned for ". $reason .".");
         }
       }
     }else{

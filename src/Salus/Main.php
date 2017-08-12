@@ -25,7 +25,6 @@ use pocketmine\block\Block;
 use Salus\Commands\ReportCommand;
 use Salus\Commands\VanishCommand;
 use Salus\Commands\WarnCommand;
-use Salus\Tasks\KickTask;
 
 class Main extends PluginBase implements Listener {
 
@@ -50,9 +49,15 @@ class Main extends PluginBase implements Listener {
 
       self::$ins = $this;
 
-      Server::getInstance()->getCommandMap()->register("report", new ReportCommand());
-      Server::getInstance()->getCommandMap()->register("vanish", new VanishCommand());
-      Server::getInstance()->getCommandMap()->register("warn", new WarnCommand());
+      if ($this->getConfig()->get("ReportCommand") === true){
+        Server::getInstance()->getCommandMap()->register("report", new ReportCommand());
+      }
+      if ($this->getConfig()->get("VanishCommand") === true){
+        Server::getInstance()->getCommandMap()->register("vanish", new VanishCommand());
+      }
+      if ($this->getConfig()->get("WarnCommand") === true){
+        Server::getInstance()->getCommandMap()->register("warn", new WarnCommand());
+      }
 
       if($this->getConfig()->get("config-version") !== 1.2){
         $this->getServer()->getLogger()->error(TF::RED . "[Salus] > Your Config is out of date!");
@@ -355,7 +360,23 @@ class Main extends PluginBase implements Listener {
     if($file >= $this->getConfig()->get("max-warns")) {
       $this->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender, $sender, $reason);
     }else{
-      $player->transfer("gamecraftpe.tk", "19132");
+      foreach($this->getConfig()->get("warn-command") as $command){
+        $this->getServer()->dispatchCommand(new ConsoleCommandSender, str_replace(array(
+          "%PLAYER%",
+          "%X%",
+          "%Y%",
+          "%Z%",
+          "%SENDER%",
+          "%REASON%"
+        ), array(
+          $player->getName(),
+          $player->getX(),
+          $player->getY(),
+          $player->getZ(),
+          $sender,
+          $reason
+        ), $command));
+      }
     }
   }
 
