@@ -20,7 +20,7 @@ class VanishCommand extends Command{
     parent::__construct("vanish", "spectating command for moderators");
   }
 
-  public function execute(CommandSender $sender, string $label, array $args){
+  public function execute(CommandSender $sender, $label, array $args){
     if($sender->hasPermission("salus.vanish")){
       $main = Main::getInstance();
       if(!(isset($args[0]))) {
