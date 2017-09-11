@@ -14,7 +14,7 @@ class WarnCommand extends Command{
     parent::__construct("warn", "warn a player for breaking the rules");
   }
 
-  public function execute(CommandSender $sender, string $label, array $args){
+  public function execute(CommandSender $sender, $label, array $args){
     if($sender->hasPermission("salus.warn")){
       $main = Main::getInstance();
       if(!(isset($args[0]) and isset($args[1]) and isset($args[2]))) {
