@@ -14,7 +14,7 @@ class ReportCommand extends Command{
     parent::__construct("report", "report a player for breaking the rules");
   }
 
-  public function execute(CommandSender $sender, string $label, array $args){
+  public function execute(CommandSender $sender, $label, array $args){
     $main = Main::getInstance();
     if(!(isset($args[0]) and isset($args[1]))) {
       $sender->sendMessage(TF::RED . "Error: not enough args. Usage: /report <player> <reason>");
