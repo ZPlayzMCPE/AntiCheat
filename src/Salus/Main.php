@@ -80,8 +80,8 @@ class Main extends PluginBase implements Listener {
   }
 
   public function isSpoon(){
-    if ($this->getServer()->getName() !== "PocketMine-MP") {
-      $this->getLogger()->error("Well... You're using a spoon. So enjoy a featureless AntiCheat plugin by Driesboy until you switch to PMMP! :)");
+    if ($this->getServer()->getName() !== "GenisysPro") {
+      $this->getLogger()->error("Well... You're using a non-spoon. So enjoy a featureless AntiCheat plugin by Driesboy until you switch to PMMP! :)");
       return true;
     }
     if($this->getDescription()->getAuthors() !== ["Driesboy"] || $this->getDescription()->getName() !== "AntiCheat"){
@@ -431,7 +431,7 @@ class Main extends PluginBase implements Listener {
     if($file >= $this->getConfig()->get("max-warns")) {
       $this->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender, $sender, $reason);
     }else{
-      $player->transfer("gamecraftpe.tk", "19132");
+      $player->transfer("hydrope.pocket.pe", "32670");
     }
   }
 
