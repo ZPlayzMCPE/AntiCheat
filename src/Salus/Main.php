@@ -431,7 +431,7 @@ class Main extends PluginBase implements Listener {
     if($file >= $this->getConfig()->get("max-warns")) {
       $this->Ban($player, TF::RED . "You are banned for using " . $reason . " by " . $sender, $sender, $reason);
     }else{
-      $player->transfer("hydrope.pocket.pe", "32670");
+      $player->transfer("voidfactionspe.factions.live", "19132");
     }
   }
 
